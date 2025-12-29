@@ -41,12 +41,12 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      vim.treesitter.language.register("python", "python")
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "python" },
-        callback = function()
-          vim.treesitter.start()
-        end,
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "python", "lua", "javascript", "typescript", "json", "yaml", "bash" },
+        auto_install = true,
+        highlight = {
+          enable = true,
+        },
       })
     end,
   },
@@ -114,6 +114,38 @@ return {
     config = function()
       vim.keymap.set('n', '<leader>e', ":Neotree toggle<CR>", { desc = "Toggle NeoTree" })
       vim.keymap.set('n', '<leader>o', ":Neotree reveal<CR>", { desc = "Reveal current file in NeoTree" })
+    end
+  },
+
+  -- リンター（flake8）
+  {
+    "mfussenegger/nvim-lint",
+    config = function()
+      require("lint").linters_by_ft = {
+        python = { "flake8" }
+      }
+      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave", "TextChanged" }, {
+        pattern = { "*.py" },
+        callback = function()
+          require("lint").try_lint()
+        end,
+      })
+    end
+  },
+
+  -- フォーマッター（black, isort）
+  {
+    "stevearc/conform.nvim",
+    config = function()
+      require("conform").setup({
+        formatters_by_ft = {
+          python = { "isort", "black" }
+        },
+        format_on_save = {
+          timeout_ms = 1000,
+          lsp_fallback = true,
+        },
+      })
     end
   },
 }

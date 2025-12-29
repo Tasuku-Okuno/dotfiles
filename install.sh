@@ -29,6 +29,8 @@ rm nvim-linux-arm64.tar.gz
 $SUDO npm install -g pyright
 # tree-sitter-cli をインストール
 $SUDO npm install -g tree-sitter-cli
+# Python リンター/フォーマッター
+pip install --break-system-packages flake8 black isort
 
 # Neovim設定をシンボリックリンク
 mkdir -p ~/.config
