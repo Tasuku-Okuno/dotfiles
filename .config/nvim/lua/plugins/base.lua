@@ -1,38 +1,52 @@
 return {
-  -- LSP設定
+  -- LSP設定（Neovim 0.11+ 対応）
   {
     "neovim/nvim-lspconfig",
     config = function()
-      local lspconfig = require("lspconfig")
+      -- Neovim 0.11+ の新しい方法
+      vim.lsp.config('pyright', {
+        cmd = { "pyright-langserver", "--stdio" },
+        filetypes = { "python" },
+        root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" },
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      })
+      vim.lsp.enable('pyright')
 
-      local on_attach = function(client, bufnr)
-        -- 定義へジャンプ
-        vim.keymap.set("n", "<leader>d", function()
-          require("telescope.builtin").lsp_definitions()
-        end, { buffer = bufnr, desc = "Go to definition (Telescope)" })
+      -- LSPがアタッチされたときのキーマップ
+      vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(args)
+          local bufnr = args.buf
+          vim.keymap.set("n", "<leader>d", function()
+            require("telescope.builtin").lsp_definitions()
+          end, { buffer = bufnr, desc = "Go to definition (Telescope)" })
 
-        -- 参照検索
-        vim.keymap.set("n", "<leader>r", function()
-          require("telescope.builtin").lsp_references()
-        end, { buffer = bufnr, desc = "Find references (Telescope)" })
+          vim.keymap.set("n", "<leader>r", function()
+            require("telescope.builtin").lsp_references()
+          end, { buffer = bufnr, desc = "Find references (Telescope)" })
 
-        -- K で診断表示
-        vim.keymap.set("n", "K", vim.diagnostic.open_float, { buffer = bufnr, desc = "Show diagnostics under cursor" })
-      end
-      -- Python
-      lspconfig.pyright.setup({
-        on_attach = on_attach,
+          vim.keymap.set("n", "K", vim.diagnostic.open_float, { buffer = bufnr, desc = "Show diagnostics under cursor" })
+        end,
       })
     end,
   },
-  -- Treesitter
+  -- Treesitter（Neovim 0.11+ 対応）
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "python" },
-        highlight = { enable = true },
+      vim.treesitter.language.register("python", "python")
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "python" },
+        callback = function()
+          vim.treesitter.start()
+        end,
       })
     end,
   },
@@ -61,7 +75,6 @@ return {
     'nvim-telescope/telescope.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-      local telescope = require('telescope')
       local actions = require('telescope.actions')
       local builtin = require('telescope.builtin')
 
@@ -69,8 +82,8 @@ return {
         defaults = {
           mappings = {
             i = {
-              ["<C-j>"] = actions.move_selection_next,   -- 下へ
-              ["<C-k>"] = actions.move_selection_previous, -- 上へ
+              ["<C-j>"] = actions.move_selection_next,
+              ["<C-k>"] = actions.move_selection_previous,
             },
             n = {
               ["<C-j>"] = actions.move_selection_next,
@@ -95,7 +108,7 @@ return {
     branch = "v3.x",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- アイコン表示
+      "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
     config = function()
@@ -104,4 +117,3 @@ return {
     end
   },
 }
-
