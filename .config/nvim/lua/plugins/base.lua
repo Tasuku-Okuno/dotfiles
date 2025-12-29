@@ -41,12 +41,11 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "python", "lua", "javascript", "typescript", "json", "yaml", "bash" },
-        auto_install = true,
-        highlight = {
-          enable = true,
-        },
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "python", "lua", "javascript", "typescript", "json", "yaml", "bash" },
+        callback = function()
+          pcall(vim.treesitter.start)
+        end,
       })
     end,
   },

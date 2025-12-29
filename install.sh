@@ -36,4 +36,7 @@ pip install --break-system-packages flake8 black isort
 mkdir -p ~/.config
 ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
 
+# Treesitter パーサーをインストール
+nvim --headless -c "TSInstall python lua javascript typescript json yaml bash" -c "qa"
+
 echo "✅ Done! Run 'nvim' to start"
