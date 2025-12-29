@@ -30,7 +30,7 @@ $SUDO npm install -g pyright
 # tree-sitter-cli をインストール
 $SUDO npm install -g tree-sitter-cli
 # Python リンター/フォーマッター
-pip install --break-system-packages flake8 black isort
+pip install --break-system-packages flake8 black isort debugpy
 
 # Neovim設定をシンボリックリンク
 mkdir -p ~/.config
