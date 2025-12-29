@@ -147,4 +147,55 @@ return {
       })
     end
   },
+
+  -- デバッガー
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = { "mfussenegger/nvim-dap-python" },
+    config = function()
+      require("dap-python").setup("python")
+      
+      local dap = require("dap")
+      vim.keymap.set("n", "<leader>Db", dap.toggle_breakpoint, { desc = "ブレークポイント" })
+      vim.keymap.set("n", "<leader>Dc", dap.continue, { desc = "デバッグ開始/続行" })
+      vim.keymap.set("n", "<leader>Dn", dap.step_over, { desc = "次の行" })
+      vim.keymap.set("n", "<leader>Di", dap.step_into, { desc = "関数の中に入る" })
+      vim.keymap.set("n", "<leader>Do", dap.step_out, { desc = "関数から出る" })
+      vim.keymap.set("n", "<leader>Dr", dap.repl.open, { desc = "REPL開く" })
+      vim.keymap.set("n", "<leader>Dx", dap.terminate, { desc = "デバッグ終了" })
+    end
+  },
+
+  -- デバッガーUI
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    config = function()
+      local dapui = require("dapui")
+      dapui.setup()
+      
+      local dap = require("dap")
+      dap.listeners.after.event_initialized["dapui"] = function() dapui.open() end
+      dap.listeners.before.event_terminated["dapui"] = function() dapui.close() end
+      dap.listeners.before.event_exited["dapui"] = function() dapui.close() end
+    end
+  },
+
+  -- Git 連携
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup({
+        on_attach = function(bufnr)
+          local gs = require("gitsigns")
+          
+          vim.keymap.set("n", "]c", gs.next_hunk, { buffer = bufnr, desc = "次の変更へ" })
+          vim.keymap.set("n", "[c", gs.prev_hunk, { buffer = bufnr, desc = "前の変更へ" })
+          vim.keymap.set("n", "<leader>Gp", gs.preview_hunk, { buffer = bufnr, desc = "変更をプレビュー" })
+          vim.keymap.set("n", "<leader>Gr", gs.reset_hunk, { buffer = bufnr, desc = "変更を取り消し" })
+          vim.keymap.set("n", "<leader>Gb", gs.blame_line, { buffer = bufnr, desc = "この行の blame" })
+        end
+      })
+    end
+  },
 }
