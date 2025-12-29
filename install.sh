@@ -27,6 +27,8 @@ rm nvim-linux-arm64.tar.gz
 
 # pyright (Python LSP) をインストール
 $SUDO npm install -g pyright
+# tree-sitter-cli をインストール
+$SUDO npm install -g tree-sitter-cli
 
 # Neovim設定をシンボリックリンク
 mkdir -p ~/.config
