@@ -99,6 +99,10 @@ return {
       vim.keymap.set("n", "<leader>g", function()
         builtin.grep_string({ search = vim.fn.expand("<cword>") })
       end, { desc = "Search word under cursor in project" })
+      -- vim-fugativeの内容をTelescopeで表示
+      vim.keymap.set('n', '<leader>Gl', builtin.git_commits, { desc = "Git log" })
+      vim.keymap.set('n', '<leader>Gs', builtin.git_status, { desc = "Git status" })
+      vim.keymap.set('n', '<leader>Gc', builtin.git_bcommits, { desc = "このファイルの履歴" })
     end
   },
   -- ツリー表示
@@ -196,6 +200,17 @@ return {
           vim.keymap.set("n", "<leader>Gb", gs.blame_line, { buffer = bufnr, desc = "この行の blame" })
         end
       })
+      -- 色を直接定義
+      vim.api.nvim_set_hl(0, "GitSignsAdd", { ctermfg = "green" })
+      vim.api.nvim_set_hl(0, "GitSignsChange", { ctermfg = "yellow" })
+      vim.api.nvim_set_hl(0, "GitSignsDelete", { ctermfg = "red" })
+    end
+  },
+  -- Git コマンド
+  {
+    "tpope/vim-fugitive",
+    config = function()
+      vim.keymap.set("n", "<leader>GB", ":Git blame<CR>", { desc = "全体 blame" })
     end
   },
 }
